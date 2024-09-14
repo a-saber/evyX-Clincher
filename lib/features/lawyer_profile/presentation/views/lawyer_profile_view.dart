@@ -2,16 +2,23 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:evyx_test/core/resources_manager/assets_manager.dart';
 import 'package:evyx_test/core/resources_manager/color_manager.dart';
 import 'package:evyx_test/core/resources_manager/style_manager.dart';
-import 'package:evyx_test/features/lawyer_profile/data/model/get_lawyer_response_model.dart';
 import 'package:evyx_test/features/lawyer_profile/presentation/cubit/get_lawyer_data/get_lawyer_data_cubit.dart';
 import 'package:evyx_test/features/lawyer_profile/presentation/cubit/get_lawyer_data/get_lawyer_data_state.dart';
-import 'package:fl_chart/fl_chart.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
+
+import 'widgets/action_builder.dart';
+import 'widgets/activity_chart_no.dart';
+import 'widgets/agent_rate_item_builder.dart';
+import 'widgets/chart_key_builder.dart';
+import 'widgets/custom_divider.dart';
+import 'widgets/custom_frame.dart';
+import 'widgets/custom_progress_bar.dart';
+import 'widgets/no_icon_above_progress_indicator.dart';
+import 'widgets/pi_chart_builder.dart';
+import 'widgets/section_title.dart';
 
 class LawyerProfileView extends StatelessWidget {
   const LawyerProfileView({super.key});
@@ -30,7 +37,7 @@ class LawyerProfileView extends StatelessWidget {
       appBar: AppBar(
         scrolledUnderElevation: 0,
         backgroundColor: ColorsManager.white,
-        title: Text('المحامين'),
+        title: const Text('المحامين'),
         leadingWidth: 38.82,
         leading: Padding(
           padding: const EdgeInsetsDirectional.only(start: 15.0),
@@ -80,7 +87,6 @@ class LawyerProfileView extends StatelessWidget {
                             ),
                             errorListener: (obj)
                             {
-                              print('errorListener ${obj.toString()}');
                               // can hide the whole img
                             },
                             imageUrl: 'https://firebasestorage.googleapis.com/v0/b/callson-cc7f9.appspot.com/o/users%2F14766.jpg?alt=media&token=a8ad3673-d98e-4dc5-9cd5-8946eb74b5cf'
@@ -267,7 +273,7 @@ class LawyerProfileView extends StatelessWidget {
                               physics: const NeverScrollableScrollPhysics(),
                               itemBuilder: (context, index)=> ActionBuilder(
                                   assetName: index>=icons.length? null: icons[index],
-                                  text: lawyer.data!.services![index] ?? ''
+                                  text: lawyer.data!.services![index]
                               )
                             )
                             ),
@@ -457,7 +463,7 @@ class LawyerProfileView extends StatelessWidget {
                                     ),
                                   ),
                                   const SizedBox(height: 40.0,),
-                                  Row(
+                                  const Row(
                                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                     children:
                                     [
@@ -473,7 +479,7 @@ class LawyerProfileView extends StatelessWidget {
                                     ],
                                   ),
                                   const SizedBox(height: 5,),
-                                  CustomProgressBar(progress: 0.8),
+                                  const CustomProgressBar(progress: 0.8),
                                   const SizedBox(height: 30.0,),
                                 ],
                               ),
@@ -510,7 +516,7 @@ class LawyerProfileView extends StatelessWidget {
                                       children:
                                       [
                                         Text(
-                                          lawyer.data!.lastAnswers![index]??'',
+                                          lawyer.data!.lastAnswers![index],
                                           style: StyleManager.bold.copyWith(
                                               fontSize: 16.0,
                                               color: ColorsManager.grey4
@@ -580,348 +586,21 @@ class LawyerProfileView extends StatelessWidget {
 }
 
 
-class PiChartBuilder extends StatelessWidget {
-  const PiChartBuilder({super.key, required this.title, required this.unanswered, required this.answered, required this.upperTitle});
 
-  final String upperTitle;
-  final String title;
-  final double unanswered;
-  final double answered;
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      children:
-      [
-        Text(
-          upperTitle,
-          style: StyleManager.medium.copyWith(
-              fontSize: 16.0,
-              color: ColorsManager.grey4
-          ),
-          textAlign: TextAlign.center,
-        ),
-        const SizedBox(height: 35,),
-        SizedBox(
-          height: 200,
-          child: PieChart(
-            PieChartData(
-              sectionsSpace: 0,
-              sections: [
-                PieChartSectionData(
-                  color: ColorsManager.brown,
-                  value: answered,
-                  title: '${answered.round()}% $title \nمجاب عليها',
-                  radius: 100,
-                  titleStyle: StyleManager.regular.copyWith(
-                    fontSize: 12.0,
-                    color: ColorsManager.white,
-                    height: 1.2
-                  )
-                ),
-                PieChartSectionData(
-                  color: ColorsManager.blackBlue,
-                  value: unanswered,
-                  title: ' ${unanswered.round()}% $title\n غير مجاب عليها',
-                  radius: 100,
-                  titleStyle: StyleManager.regular.copyWith(
-                    fontSize: 12.0,
-                    color: ColorsManager.white,
-                    height: 1.2
-                  )
-                ),
-              ],
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-}
 
-class CustomProgressBar extends StatelessWidget {
-  const CustomProgressBar({super.key, required this.progress});
 
-  final double progress;
-  @override
-  Widget build(BuildContext context) {
-    return LinearProgressIndicator(
-      value: progress,
-      color: ColorsManager.brown,
-      backgroundColor: ColorsManager.grey5,
-      borderRadius: BorderRadius.circular(30),
-    );
-  }
-}
 
-class NoIconAboveProgressBuilder extends StatelessWidget {
-  const NoIconAboveProgressBuilder({super.key, required this.count, required this.assetName, required this.isPNG});
 
-  final int count;
-  final String assetName;
-  final bool isPNG;
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      children:
-      [
-        Text(
-          '$count',
-          style: StyleManager.regular.copyWith(
-              fontSize: 14.0,
-              color: ColorsManager.black2
-          ),
-        ),
-        const SizedBox(width: 5,),
-        isPNG?
-        Image.asset(assetName)
-            :
-        SvgPicture.asset(assetName),
-      ],
-    );
-  }
-}
 
-class ChartKeyBuilder extends StatelessWidget {
-  const ChartKeyBuilder({super.key, required this.text, required this.color});
 
-  final String text;
-  final Color color;
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      children:
-      [
-        Text(
-          text,
-          style: StyleManager.regular.copyWith(
-            fontSize: 12.0,
-          ),
-        ),
-        const SizedBox(width: 5,),
-        Container(
-          margin: const EdgeInsets.only(top: 5.0),
-          height: 14.13,
-          width: 8.59,
-          color: color,
-        )
-      ],
-    );
-  }
-}
 
-class ActivityChartNo extends StatelessWidget {
-  const ActivityChartNo({super.key, required this.count});
 
-  final int count ;
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.end,
-      children: [
-        SvgPicture.asset(AssetsManager.chart),
-        const SizedBox(width: 5,),
-        Text(
-          '$count',
-          style: StyleManager.extraBold.copyWith(
-              fontSize: 14.0,
-              color: ColorsManager.blackOpacity42,
-              height: 0.8
-          ),
-        ),
-      ],
-    );
-  }
-}
 
-class AgentRateItemBuilder extends StatelessWidget {
-  const AgentRateItemBuilder({super.key, required this.review,});
 
-  final Reviews review;
 
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 15.0),
-      child: Column(
-        children:
-        [
-          Row(
-            children:
-            [
-              SvgPicture.asset(AssetsManager.buildings),
-              const SizedBox(width: 5,),
-              Text(
-                review.name ?? '',
-                style: StyleManager.bold.copyWith(
-                  fontSize: 20.0,
-                  color: ColorsManager.black2,
-                  height: 1.2
-                ),
-              ),
-              const Spacer(),
 
-              RateStarsBuilder(rate: review.rate??0.0),
-            ]
-          ),
-          const SizedBox(height: 15.0,),
-          Text(
-            review.comment ?? '',
-            style: StyleManager.bold.copyWith(
-              fontSize: 16.0,
-              color: ColorsManager.grey4
-            ),),
 
-          const SizedBox(height: 10.0,),
-          const CustomDivider(),
 
-        ],
-      ),
-    );
-  }
-}
 
-class CustomDivider extends StatelessWidget {
-  const CustomDivider({super.key});
 
-  @override
-  Widget build(BuildContext context) {
-    return const Divider(color: ColorsManager.greyWhite, thickness: 1.0, height: 1,);
-  }
-}
 
-class RateStarsBuilder extends StatelessWidget {
-  const RateStarsBuilder({super.key, required this.rate});
-
-  final double rate ;
-  @override
-  Widget build(BuildContext context) {
-
-    int fullStars = rate.floor();
-    bool hasHalfStar = (rate - fullStars) >= 0.5;
-    int emptyStars = 5 - fullStars - (hasHalfStar ? 1 : 0);
-
-    return Row(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-
-        // Empty stars
-        for (int i = 0; i < emptyStars; i++)
-          Image.asset(AssetsManager.starEmpty),
-
-        // Half star
-        if (hasHalfStar)
-          Image.asset(AssetsManager.halfStar),
-
-        // Full stars
-        for (int i = 0; i < fullStars; i++)
-          SvgPicture.asset(AssetsManager.star),
-
-      ],
-    );
-  }
-}
-
-class SectionTitle extends StatelessWidget {
-  const SectionTitle({super.key, required this.text, required this.fontSize, this.widget});
-
-  final String text;
-  final double fontSize;
-  final Widget? widget;
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      height: 88,
-      width: double.infinity,
-      color: ColorsManager.whiteGrey,
-      padding: const EdgeInsets.symmetric(horizontal: 20),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisAlignment:  MainAxisAlignment.center,
-        children: [
-          Row(
-            children: [
-              Expanded(
-                child: Text(
-                  text,
-                  style: StyleManager.bold.copyWith(
-                    fontSize: fontSize,
-                  ),
-                ),
-              ),
-              if(widget != null)
-                widget!,
-            ],
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class ActionBuilder extends StatelessWidget {
-  const ActionBuilder({super.key, required this.assetName, required this.text});
-
-  final String? assetName;
-  final String text;
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(top: 24.0),
-      child: Row(
-        children:
-        [
-          Builder(
-            builder: (context) {
-              if(assetName != null) {
-                return SvgPicture.asset(
-                assetName!,
-                width: 40,
-                height: 40,
-                color: ColorsManager.brown,
-              );
-              } else {
-                return const SizedBox(
-                width: 40,
-                height: 40,
-              );
-              }
-            }
-          ),
-          const SizedBox(width: 32.0,),
-          Text(
-            text,
-            style: StyleManager.bold.copyWith(
-                fontSize: 20.0,
-                color: ColorsManager.blackOpacity42
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class CustomFrame extends StatelessWidget {
-  const CustomFrame({super.key, required this.child});
-
-  final Widget child;
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 15.0),
-        width: double.infinity,
-        decoration: BoxDecoration(
-          color: Colors.white, // Set the background color of the container
-          boxShadow: [
-            BoxShadow(
-              color: ColorsManager.blackOpacity10, // Shadow color and opacity
-              spreadRadius: 0,
-              blurRadius: 4,
-              offset: const Offset(0, 0),
-            ),
-          ],
-        ),
-        child: child
-    );
-  }
-}
